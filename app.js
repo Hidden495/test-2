@@ -58,32 +58,72 @@ function createFeatureSections() {
     });
 }
 
-// Dummy test functions
+// Function to test all features
+function testAllFeatures() {
+    const container = document.getElementById('feature-sections');
+    container.innerHTML = ''; // Clear previous results
+    features.forEach(feature => {
+        const section = document.createElement('div');
+        section.className = 'section';
+        
+        const title = document.createElement('h2');
+        title.innerText = feature.name;
+        section.appendChild(title);
+        
+        const output = document.createElement('div');
+        output.className = 'output';
+        output.innerText = feature.func();
+        section.appendChild(output);
+        
+        container.appendChild(section);
+    });
+}
+
+// Array Methods
 function testArrayMethods() {
     const arr = [1, 2, 3, 4, 5];
-    return arr.map(x => x * 2).join(', ');
+    const doubled = arr.map(x => x * 2);
+    return `Original: ${arr.join(', ')} | Doubled: ${doubled.join(', ')}`;
 }
 
-function testAsyncAwait() {
-    return 'Async/Await: Not implemented yet';
+// Async/Await
+async function testAsyncAwait() {
+    const fetchData = async () => {
+        return new Promise(resolve => setTimeout(() => resolve('Data fetched'), 1000));
+    };
+    const result = await fetchData();
+    return result;
 }
 
+// Data Manipulation
 function testDataManipulation() {
-    return 'Data Manipulation: Not implemented yet';
+    const data = [{ id: 1, value: 'A' }, { id: 2, value: 'B' }, { id: 3, value: 'C' }];
+    const values = data.map(item => item.value);
+    return `Values: ${values.join(', ')}`;
 }
 
+// String Methods
 function testStringMethods() {
-    return 'String Methods: Not implemented yet';
+    const str = 'Hello, World!';
+    const upperStr = str.toUpperCase();
+    return `Original: ${str} | Uppercase: ${upperStr}`;
 }
 
+// Date Objects
 function testDateObjects() {
-    return `Current Date: ${new Date().toLocaleString()}`;
+    const now = new Date();
+    return `Current Date and Time: ${now.toString()}`;
 }
 
+// Regular Expressions
 function testRegularExpressions() {
-    return 'Regular Expressions: Not implemented yet';
+    const regex = /\d+/g;
+    const str = 'There are 123 apples and 456 oranges.';
+    const matches = str.match(regex);
+    return `Matches: ${matches.join(', ')}`;
 }
 
+// Geolocation
 function testGeolocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
@@ -95,110 +135,218 @@ function testGeolocation() {
     }
 }
 
+// Local Storage
 function testLocalStorage() {
     localStorage.setItem('test', 'Local Storage Test');
-    return localStorage.getItem('test');
+    return `Local Storage: ${localStorage.getItem('test')}`;
 }
 
+// Session Storage
 function testSessionStorage() {
     sessionStorage.setItem('test', 'Session Storage Test');
-    return sessionStorage.getItem('test');
+    return `Session Storage: ${sessionStorage.getItem('test')}`;
 }
 
+// Cache API
 function testCacheAPI() {
     if ('caches' in window) {
         caches.open('test-cache').then(cache => {
             cache.add('/');
             return 'Cache API: Entry added';
         });
+        return 'Cache API: Entry added';
     } else {
         return 'Cache API: Not supported';
     }
 }
 
+// File Handling
 function testFileHandling() {
-    return 'File Handling: Not implemented yet';
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.onchange = event => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = e => alert(`File content: ${e.target.result}`);
+        reader.readAsText(file);
+    };
+    fileInput.click();
+    return 'File Handling: Please select a file';
 }
 
+// Set and Map
 function testSetMap() {
     const set = new Set([1, 2, 3]);
-    return `Set has 2: ${set.has(2)}`;
+    const map = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    return `Set has 2: ${set.has(2)} | Map get key1: ${map.get('key1')}`;
 }
 
+// WeakMap/WeakSet
 function testWeakCollections() {
-    return 'WeakMap/WeakSet: Not implemented yet';
+    const weakMap = new WeakMap();
+    const obj = {};
+    weakMap.set(obj, 'value');
+    return `WeakMap get: ${weakMap.get(obj)}`;
 }
 
-function testGenerators() {
-    return 'Generators: Not implemented yet';
+// Generators
+function* testGenerators() {
+    yield 1;
+    yield 2;
+    yield 3;
 }
 
+function testGeneratorsWrapper() {
+    const generator = testGenerators();
+    const values = [];
+    for (const value of generator) {
+        values.push(value);
+    }
+    return `Generator values: ${values.join(', ')}`;
+}
+
+// Destructuring
 function testDestructuring() {
-    return 'Destructuring: Not implemented yet';
+    const [a, b] = [1, 2];
+    return `Destructured values: a = ${a}, b = ${b}`;
 }
 
+// Spread Operator
 function testSpreadOperator() {
-    return 'Spread Operator: Not implemented yet';
+    const arr = [1, 2, 3];
+    const newArr = [...arr, 4, 5];
+    return `Spread array: ${newArr.join(', ')}`;
 }
 
+// Template Literals
 function testTemplateLiterals() {
-    return 'Template Literals: Not implemented yet';
+    const name = 'World';
+    return `Hello, ${name}!`;
 }
 
+// Modules
 function testModules() {
-    return 'Modules: Not implemented yet';
+    return 'Modules: Not implemented in this context';
 }
 
+// Proxy and Reflect
 function testProxyReflect() {
-    return 'Proxy and Reflect: Not implemented yet';
+    const target = { message: 'Hello, World!' };
+    const handler = {
+        get: (obj, prop) => (prop in obj ? obj[prop] : 'Not Found')
+    };
+    const proxy = new Proxy(target, handler);
+    return `Proxy message: ${proxy.message} | Proxy missing: ${proxy.missing}`;
 }
 
+// Symbols
 function testSymbols() {
-    return 'Symbols: Not implemented yet';
+    const sym = Symbol('test');
+    const obj = { [sym]: 'Symbol value' };
+    return `Symbol value: ${obj[sym]}`;
 }
 
+// Iterators
 function testIterators() {
-    return 'Iterators: Not implemented yet';
+    const iterable = [1, 2, 3];
+    const iterator = iterable[Symbol.iterator]();
+    const values = [];
+    let result = iterator.next();
+    while (!result.done) {
+        values.push(result.value);
+        result = iterator.next();
+    }
+    return `Iterator values: ${values.join(', ')}`;
 }
 
+// Closures
 function testClosures() {
-    return 'Closures: Not implemented yet';
+    function createCounter() {
+        let count = 0;
+        return function() {
+            return ++count;
+        };
+    }
+    const counter = createCounter();
+    return `Closure count: ${counter()}, ${counter()}, ${counter()}`;
 }
 
+// Promises
 function testPromises() {
-    return 'Promises: Not implemented yet';
+    return new Promise(resolve => {
+        setTimeout(() => resolve('Promise resolved'), 1000);
+    }).then(result => result);
 }
 
+// Object Methods
 function testObjectMethods() {
-    return 'Object Methods: Not implemented yet';
+    const obj = { a: 1, b: 2 };
+    const keys = Object.keys(obj);
+    const values = Object.values(obj);
+    const entries = Object.entries(obj);
+    return `Keys: ${keys.join(', ')} | Values: ${values.join(', ')} | Entries: ${entries.join(', ')}`;
 }
 
+// JSON Methods
 function testJSONMethods() {
-    return 'JSON Methods: Not implemented yet';
+    const obj = { a: 1, b: 2 };
+    const jsonString = JSON.stringify(obj);
+    const parsedObj = JSON.parse(jsonString);
+    return `JSON string: ${jsonString} | Parsed object: ${JSON.stringify(parsedObj)}`;
 }
 
-function testRestOperator() {
-    return 'Rest Operator: Not implemented yet';
+// Rest Operator
+function testRestOperator(...args) {
+    return `Rest operator values: ${args.join(', ')}`;
 }
 
+// Class Features
 function testClassFeatures() {
-    return 'Class Features: Not implemented yet';
+    class Person {
+        constructor(name) {
+            this.name = name;
+        }
+        greet() {
+            return `Hello, ${this.name}`;
+        }
+    }
+    const person = new Person('World');
+    return person.greet();
 }
 
+// Math Operations
 function testMathOperations() {
-    return 'Math Operations: Not implemented yet';
+    const sum = Math.sum = (...args) => args.reduce((a, b) => a + b, 0);
+    return `Sum: ${sum(1, 2, 3, 4, 5)}`;
 }
 
+// Fetch API
 function testFetchAPI() {
-    return 'Fetch API: Not implemented yet';
+    return fetch('https://jsonplaceholder.typicode.com/posts/1')
+        .then(response => response.json())
+        .then(data => `Fetch API: ${JSON.stringify(data)}`)
+        .catch(error => `Fetch API error: ${error}`);
 }
 
+// Observers
 function testObservers() {
-    return 'Observers: Not implemented yet';
+    const div = document.createElement('div');
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            console.log(`Mutation type: ${mutation.type}`);
+        });
+    });
+    observer.observe(div, { attributes: true });
+    div.setAttribute('data-test', 'test');
+    return 'Observers: Mutation observed';
 }
 
+// WebSocket
 function testWebSocket() {
-    return 'WebSocket: Not implemented yet';
+    const socket = new WebSocket('wss://echo.websocket.org');
+    socket.onopen = () => socket.send('Hello, World!');
+    socket.onmessage = event => alert(`WebSocket message: ${event.data}`);
+    return 'WebSocket: Message sent';
 }
 
 // Initialize feature sections on page load
