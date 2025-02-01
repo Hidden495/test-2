@@ -41,7 +41,9 @@ const features = [
     { id: 'canvas', name: 'Canvas API', func: testCanvasAPI },
     { id: 'performance', name: 'Performance API', func: testPerformanceAPI },
     { id: 'deviceOrientation', name: 'Device Orientation', func: testDeviceOrientation },
-    { id: 'fullScreen', name: 'Full Screen API', func: testFullScreenAPI }
+    { id: 'fullScreen', name: 'Full Screen API', func: testFullScreenAPI },
+    { id: 'cookie', name: 'Cookie API', func: testCookieAPI },
+{ id: 'fillLocalStorage', name: 'Fill Local Storage', func: testFillLocalStorage }
 ];
 
 // Function to create feature sections
@@ -538,6 +540,29 @@ function testFullScreenAPI() {
         return 'Full Screen API: Entered full screen mode';
     } else {
         return 'Full Screen API: Not supported';
+    }
+}
+JavaScript
+// Cookie API
+function testCookieAPI() {
+    // Set a cookie
+    document.cookie = "testCookie=Hello; max-age=3600"; // Expires in 1 hour
+    // Get all cookies
+    const cookies = document.cookie;
+    return `Cookies: ${cookies}`;
+}
+
+// Fill Local Storage
+function testFillLocalStorage() {
+    try {
+        let i = 0;
+        const testValue = 'a'.repeat(1024 * 1024); // 1 MB of data
+        while (true) {
+            localStorage.setItem('test' + i, testValue);
+            i++;
+        }
+    } catch (e) {
+        return `Local Storage filled. Total items stored: ${localStorage.length}`;
     }
 }
 
