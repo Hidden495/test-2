@@ -43,7 +43,7 @@ const features = [
     { id: 'deviceOrientation', name: 'Device Orientation', func: testDeviceOrientation },
     { id: 'fullScreen', name: 'Full Screen API', func: testFullScreenAPI },
     { id: 'cookie', name: 'Cookie API', func: testCookieAPI },
-{ id: 'fillLocalStorage', name: 'Fill Local Storage', func: testFillLocalStorage }
+    { id: 'fillLocalStorage', name: 'Fill Local Storage', func: testFillLocalStorage }
 ];
 
 // Function to create feature sections
@@ -542,7 +542,7 @@ function testFullScreenAPI() {
         return 'Full Screen API: Not supported';
     }
 }
-JavaScript
+
 // Cookie API
 function testCookieAPI() {
     // Set a cookie
