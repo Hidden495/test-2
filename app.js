@@ -38,7 +38,10 @@ const features = [
     { id: 'worker', name: 'Web Workers', func: testWebWorker },
     { id: 'serviceWorker', name: 'Service Workers', func: testServiceWorker },
     { id: 'indexedDB', name: 'IndexedDB', func: testIndexedDB },
-    { id: 'canvas', name: 'Canvas API', func: testCanvasAPI }
+    { id: 'canvas', name: 'Canvas API', func: testCanvasAPI },
+    { id: 'performance', name: 'Performance API', func: testPerformanceAPI },
+    { id: 'deviceOrientation', name: 'Device Orientation', func: testDeviceOrientation },
+    { id: 'fullScreen', name: 'Full Screen API', func: testFullScreenAPI }
 ];
 
 // Function to create feature sections
@@ -502,6 +505,40 @@ function testCanvasAPI() {
     document.body.appendChild(canvas);
 
     return 'Canvas API: Red rectangle drawn';
+}
+// Performance API
+function testPerformanceAPI() {
+    const measureName = 'testMeasure';
+    performance.mark('start');
+    for (let i = 0; i < 1000000; i++) {} // Dummy loop for performance measurement
+    performance.mark('end');
+    performance.measure(measureName, 'start', 'end');
+    const measure = performance.getEntriesByName(measureName)[0];
+    return `Performance API: Measure duration is ${measure.duration}ms`;
+}
+
+// Device Orientation
+function testDeviceOrientation() {
+    if ('DeviceOrientationEvent' in window) {
+        window.addEventListener('deviceorientation', event => {
+            const { alpha, beta, gamma } = event;
+            alert(`Device Orientation: Alpha=${alpha}, Beta=${beta}, Gamma=${gamma}`);
+        });
+        return 'Device Orientation: Event listener added';
+    } else {
+        return 'Device Orientation: Not supported';
+    }
+}
+
+// Full Screen API
+function testFullScreenAPI() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+        return 'Full Screen API: Entered full screen mode';
+    } else {
+        return 'Full Screen API: Not supported';
+    }
 }
 
 // Initialize feature sections on page load
