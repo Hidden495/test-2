@@ -43,7 +43,11 @@ const features = [
     { id: 'deviceOrientation', name: 'Device Orientation', func: testDeviceOrientation },
     { id: 'fullScreen', name: 'Full Screen API', func: testFullScreenAPI },
     { id: 'cookie', name: 'Cookie API', func: testCookieAPI },
-    { id: 'fillLocalStorage', name: 'Fill Local Storage', func: testFillLocalStorage }
+    { id: 'fillLocalStorage', name: 'Fill Local Storage', func: testFillLocalStorage },
+    { id: 'indexedDB', name: 'IndexedDB', func: testIndexedDB },
+    { id: 'battery', name: 'Battery API', func: testBatteryAPI },
+    { id: 'vibration', name: 'Vibration API', func: testVibrationAPI },
+    { id: 'network', name: 'Network Information API', func: testNetworkAPI }
 ];
 
 // Function to create feature sections
@@ -563,6 +567,65 @@ function testFillLocalStorage() {
         }
     } catch (e) {
         return `Local Storage filled. Total items stored: ${localStorage.length}`;
+    }
+}
+function testIndexedDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('testDB', 1);
+
+        request.onerror = function(event) {
+            reject('IndexedDB: Failed to open database');
+        };
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['store'], 'readwrite');
+            const objectStore = transaction.objectStore('store');
+            objectStore.add({ id: '1', name: 'Test' });
+
+            transaction.oncomplete = function() {
+                resolve('IndexedDB: Data added');
+            };
+
+            transaction.onerror = function(event) {
+                reject('IndexedDB: Failed to add data');
+            };
+        };
+
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            db.createObjectStore('store', { keyPath: 'id' });
+        };
+    });
+}
+
+// Battery API
+async function testBatteryAPI() {
+    if ('getBattery' in navigator) {
+        const battery = await navigator.getBattery();
+        return `Battery API: Level=${battery.level * 100}%, Charging=${battery.charging}`;
+    } else {
+        return 'Battery API: Not supported';
+    }
+}
+
+// Vibration API
+function testVibrationAPI() {
+    if ('vibrate' in navigator) {
+        navigator.vibrate(200);
+        return 'Vibration API: Device vibrated for 200ms';
+    } else {
+        return 'Vibration API: Not supported';
+    }
+}
+
+// Network Information API
+function testNetworkAPI() {
+    if ('connection' in navigator) {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        return `Network Information API: Type=${connection.effectiveType}, Downlink=${connection.downlink}Mbps`;
+    } else {
+        return 'Network Information API: Not supported';
     }
 }
 
