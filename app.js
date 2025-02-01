@@ -13,7 +13,7 @@ const features = [
     { id: 'file', name: 'File Handling', func: testFileHandling },
     { id: 'setMap', name: 'Set and Map', func: testSetMap },
     { id: 'weakCollections', name: 'WeakMap/WeakSet', func: testWeakCollections },
-    { id: 'generators', name: 'Generators', func: testGenerators },
+    { id: 'generators', name: 'Generators', func: testGeneratorsWrapper },
     { id: 'destructuring', name: 'Destructuring', func: testDestructuring },
     { id: 'spread', name: 'Spread Operator', func: testSpreadOperator },
     { id: 'template', name: 'Template Literals', func: testTemplateLiterals },
@@ -30,7 +30,15 @@ const features = [
     { id: 'math', name: 'Math Operations', func: testMathOperations },
     { id: 'fetch', name: 'Fetch API', func: testFetchAPI },
     { id: 'observer', name: 'Observers', func: testObservers },
-    { id: 'websocket', name: 'WebSocket', func: testWebSocket }
+    { id: 'websocket', name: 'WebSocket', func: testWebSocket },
+    { id: 'microphone', name: 'Microphone', func: testMicrophone },
+    { id: 'camera', name: 'Camera', func: testCamera },
+    { id: 'clipboard', name: 'Clipboard Access', func: testClipboard },
+    { id: 'notifications', name: 'Notifications', func: testNotifications },
+    { id: 'worker', name: 'Web Workers', func: testWebWorker },
+    { id: 'serviceWorker', name: 'Service Workers', func: testServiceWorker },
+    { id: 'indexedDB', name: 'IndexedDB', func: testIndexedDB },
+    { id: 'canvas', name: 'Canvas API', func: testCanvasAPI }
 ];
 
 // Function to create feature sections
@@ -46,10 +54,10 @@ function createFeatureSections() {
         
         const button = document.createElement('button');
         button.innerText = `Test ${feature.name}`;
-        button.onclick = () => {
+        button.onclick = async () => {
             const output = document.createElement('div');
             output.className = 'output';
-            output.innerText = feature.func();
+            output.innerText = await feature.func();
             section.appendChild(output);
         };
         section.appendChild(button);
@@ -59,10 +67,10 @@ function createFeatureSections() {
 }
 
 // Function to test all features
-function testAllFeatures() {
+async function testAllFeatures() {
     const container = document.getElementById('feature-sections');
     container.innerHTML = ''; // Clear previous results
-    features.forEach(feature => {
+    for (const feature of features) {
         const section = document.createElement('div');
         section.className = 'section';
         
@@ -72,11 +80,11 @@ function testAllFeatures() {
         
         const output = document.createElement('div');
         output.className = 'output';
-        output.innerText = feature.func();
+        output.innerText = await feature.func();
         section.appendChild(output);
         
         container.appendChild(section);
-    });
+    }
 }
 
 // Array Methods
@@ -125,14 +133,17 @@ function testRegularExpressions() {
 
 // Geolocation
 function testGeolocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            alert(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
-        });
-        return 'Geolocation: Fetching...';
-    } else {
-        return 'Geolocation: Not supported';
-    }
+    return new Promise((resolve) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                resolve(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
+            }, error => {
+                resolve(`Geolocation error: ${error.message}`);
+            });
+        } else {
+            resolve('Geolocation: Not supported');
+        }
+    });
 }
 
 // Local Storage
@@ -148,12 +159,10 @@ function testSessionStorage() {
 }
 
 // Cache API
-function testCacheAPI() {
+async function testCacheAPI() {
     if ('caches' in window) {
-        caches.open('test-cache').then(cache => {
-            cache.add('/');
-            return 'Cache API: Entry added';
-        });
+        const cache = await caches.open('test-cache');
+        await cache.add('/');
         return 'Cache API: Entry added';
     } else {
         return 'Cache API: Not supported';
@@ -164,14 +173,15 @@ function testCacheAPI() {
 function testFileHandling() {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
-    fileInput.onchange = event => {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onload = e => alert(`File content: ${e.target.result}`);
-        reader.readAsText(file);
-    };
-    fileInput.click();
-    return 'File Handling: Please select a file';
+    return new Promise((resolve) => {
+        fileInput.onchange = event => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = e => resolve(`File content: ${e.target.result}`);
+            reader.readAsText(file);
+        };
+        fileInput.click();
+    });
 }
 
 // Set and Map
@@ -316,37 +326,182 @@ function testClassFeatures() {
 
 // Math Operations
 function testMathOperations() {
-    const sum = Math.sum = (...args) => args.reduce((a, b) => a + b, 0);
-    return `Sum: ${sum(1, 2, 3, 4, 5)}`;
+    Math.sum = (...args) => args.reduce((a, b) => a + b, 0);
+    return `Sum: ${Math.sum(1, 2, 3, 4, 5)}`;
 }
 
 // Fetch API
-function testFetchAPI() {
-    return fetch('https://jsonplaceholder.typicode.com/posts/1')
-        .then(response => response.json())
-        .then(data => `Fetch API: ${JSON.stringify(data)}`)
-        .catch(error => `Fetch API error: ${error}`);
+async function testFetchAPI() {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+        const data = await response.json();
+        return `Fetch API: ${JSON.stringify(data)}`;
+    } catch (error) {
+        return `Fetch API error: ${error}`;
+    }
 }
 
 // Observers
 function testObservers() {
-    const div = document.createElement('div');
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-            console.log(`Mutation type: ${mutation.type}`);
+    return new Promise((resolve) => {
+        const div = document.createElement('div');
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                resolve(`Mutation type: ${mutation.type}`);
+            });
         });
+        observer.observe(div, { attributes: true });
+        div.setAttribute('data-test', 'test');
     });
-    observer.observe(div, { attributes: true });
-    div.setAttribute('data-test', 'test');
-    return 'Observers: Mutation observed';
 }
 
 // WebSocket
 function testWebSocket() {
-    const socket = new WebSocket('wss://echo.websocket.org');
-    socket.onopen = () => socket.send('Hello, World!');
-    socket.onmessage = event => alert(`WebSocket message: ${event.data}`);
-    return 'WebSocket: Message sent';
+    return new Promise((resolve) => {
+        const socket = new WebSocket('wss://echo.websocket.org');
+        socket.onopen = () => socket.send('Hello, World!');
+        socket.onmessage = event => resolve(`WebSocket message: ${event.data}`);
+    });
+}
+
+// Microphone
+function testMicrophone() {
+    return new Promise((resolve, reject) => {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                const audioTracks = stream.getAudioTracks();
+                resolve(`Microphone: Access granted with ${audioTracks.length} audio tracks`);
+            })
+            .catch(error => {
+                reject(`Microphone: Access denied - ${error.message}`);
+            });
+    });
+}
+
+// Camera
+function testCamera() {
+    return new Promise((resolve, reject) => {
+        const videoElement = document.createElement('video');
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                videoElement.srcObject = stream;
+                videoElement.play();
+                resolve('Camera: Access granted');
+                // Append video element to the body or a specific section
+                document.body.appendChild(videoElement);
+            })
+            .catch(error => {
+                reject(`Camera: Access denied - ${error.message}`);
+            });
+    });
+}
+
+// Clipboard Access
+function testClipboard() {
+    return navigator.clipboard.readText()
+        .then(text => `Clipboard content: ${text}`)
+        .catch(err => `Clipboard error: ${err}`);
+}
+
+// Notifications
+function testNotifications() {
+    if (!("Notification" in window)) {
+        return "This browser does not support desktop notifications.";
+    }
+    if (Notification.permission === "granted") {
+        new Notification("Hi there!");
+        return "Notification sent.";
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                new Notification("Hi there!");
+                return "Notification sent.";
+            }
+        });
+    }
+    return "Notification permission denied.";
+}
+
+// Web Workers
+function testWebWorker() {
+    if (window.Worker) {
+        const worker = new Worker(URL.createObjectURL(new Blob([`
+            self.onmessage = function(e) {
+                self.postMessage('Worker received: ' + e.data);
+            };
+        `], { type: 'application/javascript' })));
+        
+        worker.onmessage = function(e) {
+            alert('Message from Worker: ' + e.data);
+        };
+        
+        worker.postMessage('Hello, Worker!');
+        return 'Web Worker: Message sent to worker';
+    } else {
+        return 'Web Worker: Not supported';
+    }
+}
+
+// Service Workers
+async function testServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+            const registration = await navigator.serviceWorker.register('/service-worker.js');
+            return `Service Worker: Registered with scope ${registration.scope}`;
+        } catch (error) {
+            return `Service Worker registration failed: ${error}`;
+        }
+    } else {
+        return 'Service Worker: Not supported';
+    }
+}
+
+// IndexedDB
+function testIndexedDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('testDB', 1);
+
+        request.onerror = function(event) {
+            reject('IndexedDB: Failed to open database');
+        };
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['store'], 'readwrite');
+            const objectStore = transaction.objectStore('store');
+            objectStore.add({ id: '1', name: 'Test' });
+
+            transaction.oncomplete = function() {
+                resolve('IndexedDB: Data added');
+            };
+
+            transaction.onerror = function(event) {
+                reject('IndexedDB: Failed to add data');
+            };
+        };
+
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            db.createObjectStore('store', { keyPath: 'id' });
+        };
+    });
+}
+
+// Canvas API
+function testCanvasAPI() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+    const context = canvas.getContext('2d');
+
+    // Draw a red rectangle
+    context.fillStyle = 'red';
+    context.fillRect(10, 10, 100, 100);
+
+    // Append canvas to the body or a specific section
+    document.body.appendChild(canvas);
+
+    return 'Canvas API: Red rectangle drawn';
 }
 
 // Initialize feature sections on page load
