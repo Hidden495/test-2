@@ -47,7 +47,55 @@ const features = [
     { id: 'indexedDB', name: 'IndexedDB', func: testIndexedDB },
     { id: 'battery', name: 'Battery API', func: testBatteryAPI },
     { id: 'vibration', name: 'Vibration API', func: testVibrationAPI },
-    { id: 'network', name: 'Network Information API', func: testNetworkAPI }
+    { id: 'network', name: 'Network Information API', func: testNetworkAPI },
+    { id: 'speechRecognition', name: 'Speech Recognition API', func: testSpeechRecognitionAPI },
+    { id: 'speechSynthesis', name: 'Speech Synthesis API', func: testSpeechSynthesisAPI },
+    { id: 'gamepad', name: 'Gamepad API', func: testGamepadAPI },
+    { id: 'webRTC', name: 'WebRTC API', func: testWebRTCAPI },
+    { id: 'webAssembly', name: 'WebAssembly', func: testWebAssembly },
+    { id: 'bluetooth', name: 'Web Bluetooth API', func: testWebBluetoothAPI },
+    { id: 'usb', name: 'Web USB API', func: testWebUSBAPI },
+    { id: 'gyroscope', name: 'Gyroscope API', func: testGyroscopeAPI },
+    { id: 'accelerometer', name: 'Accelerometer API', func: testAccelerometerAPI },
+    { id: 'ambientLight', name: 'Ambient Light API', func: testAmbientLightAPI },
+    { id: 'magnetometer', name: 'Magnetometer API', func: testMagnetometerAPI },
+    { id: 'proximity', name: 'Proximity API', func: testProximityAPI },
+    { id: 'webShare', name: 'Web Share API', func: testWebShareAPI },
+    { id: 'pageVisibility', name: 'Page Visibility API', func: testPageVisibilityAPI },
+    { id: 'screenOrientation', name: 'Screen Orientation API', func: testScreenOrientationAPI },
+    { id: 'resizeObserver', name: 'Resize Observer API', func: testResizeObserverAPI },
+    { id: 'mutationObserver', name: 'Mutation Observer API', func: testMutationObserverAPI },
+    { id: 'intersectionObserver', name: 'Intersection Observer API', func: testIntersectionObserverAPI },
+    { id: 'performanceObserver', name: 'Performance Observer API', func: testPerformanceObserverAPI },
+    { id: 'paymentRequest', name: 'Payment Request API', func: testPaymentRequestAPI },
+    { id: 'deviceMemory', name: 'Device Memory API', func: testDeviceMemoryAPI },
+    { id: 'pointerLock', name: 'Pointer Lock API', func: testPointerLockAPI },
+    { id: 'webAudio', name: 'Web Audio API', func: testWebAudioAPI },
+    { id: 'webAnimations', name: 'Web Animations API', func: testWebAnimationsAPI },
+    { id: 'dragAndDrop', name: 'Drag and Drop API', func: testDragAndDropAPI },
+    { id: 'mediaDevices', name: 'Media Devices API', func: testMediaDevicesAPI },
+    { id: 'screenCapture', name: 'Screen Capture API', func: testScreenCaptureAPI },
+    { id: 'mediaSession', name: 'Media Session API', func: testMediaSessionAPI },
+    { id: 'fullscreenChange', name: 'Fullscreen Change Event', func: testFullscreenChangeEvent },
+    { id: 'deviceOrientationAbsolute', name: 'Device Orientation Absolute', func: testDeviceOrientationAbsolute },
+    { id: 'deviceMotion', name: 'Device Motion API', func: testDeviceMotionAPI },
+    { id: 'onlineOffline', name: 'Online/Offline Events', func: testOnlineOfflineEvents },
+    { id: 'pageLoad', name: 'Page Load Event', func: testPageLoadEvent },
+    { id: 'beforeUnload', name: 'Before Unload Event', func: testBeforeUnloadEvent },
+    { id: 'storage', name: 'Storage Event', func: testStorageEvent },
+    { id: 'crypto', name: 'Crypto API', func: testCryptoAPI },
+    { id: 'quota', name: 'Quota Management API', func: testQuotaManagementAPI },
+    { id: 'contactPicker', name: 'Contact Picker API', func: testContactPickerAPI },
+    { id: 'wakeLock', name: 'Wake Lock API', func: testWakeLockAPI },
+    { id: 'backgroundSync', name: 'Background Sync API', func: testBackgroundSyncAPI },
+    { id: 'periodicSync', name: 'Periodic Sync API', func: testPeriodicSyncAPI },
+    { id: 'sensor', name: 'Generic Sensor API', func: testSensorAPI },
+    { id: 'credentialManagement', name: 'Credential Management API', func: testCredentialManagementAPI },
+    { id: 'visibilityChange', name: 'Visibility Change Event', func: testVisibilityChangeEvent },
+    { id: 'scrollRestoration', name: 'Scroll Restoration API', func: testScrollRestorationAPI },
+    { id: 'focus', name: 'Focus and Blur Events', func: testFocusBlurEvents },
+    { id: 'pointerEvents', name: 'Pointer Events', func: testPointerEvents },
+    { id: 'popState', name: 'Pop State Event', func: testPopStateEvent }
 ];
 
 // Function to create feature sections
@@ -628,6 +676,625 @@ function testNetworkAPI() {
         return 'Network Information API: Not supported';
     }
 }
+// Speech Recognition API
+function testSpeechRecognitionAPI() {
+    return new Promise((resolve, reject) => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.onstart = () => resolve('Speech Recognition API: Listening started');
+            recognition.onspeechend = () => resolve('Speech Recognition API: Listening stopped');
+            recognition.onerror = (event) => reject(`Speech Recognition API error: ${event.error}`);
+            recognition.start();
+        } else {
+            reject('Speech Recognition API: Not supported');
+        }
+    });
+}
 
+// Speech Synthesis API
+function testSpeechSynthesisAPI() {
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance('Hello, world!');
+        speechSynthesis.speak(utterance);
+        return 'Speech Synthesis API: Speaking "Hello, world!"';
+    } else {
+        return 'Speech Synthesis API: Not supported';
+    }
+}
+
+// Gamepad API
+function testGamepadAPI() {
+    if ('getGamepads' in navigator) {
+        window.addEventListener('gamepadconnected', event => {
+            const gp = navigator.getGamepads()[event.gamepad.index];
+            alert(`Gamepad connected: ${gp.id}`);
+        });
+        window.addEventListener('gamepaddisconnected', event => {
+            alert(`Gamepad disconnected: ${event.gamepad.id}`);
+        });
+        return 'Gamepad API: Event listeners added for gamepad connection and disconnection';
+    } else {
+        return 'Gamepad API: Not supported';
+    }
+}
+
+// WebRTC API
+function testWebRTCAPI() {
+    if ('RTCPeerConnection' in window) {
+        const pc = new RTCPeerConnection();
+        return 'WebRTC API: RTCPeerConnection created';
+    } else {
+        return 'WebRTC API: Not supported';
+    }
+}
+
+// WebAssembly
+function testWebAssembly() {
+    if ('WebAssembly' in window) {
+        return 'WebAssembly: Supported';
+    } else {
+        return 'WebAssembly: Not supported';
+    }
+}
+
+// Web Bluetooth API
+function testWebBluetoothAPI() {
+    if (navigator.bluetooth) {
+        return 'Web Bluetooth API: Supported';
+    } else {
+        return 'Web Bluetooth API: Not supported';
+    }
+}
+
+// Web USB API
+function testWebUSBAPI() {
+    if (navigator.usb) {
+        return 'Web USB API: Supported';
+    } else {
+        return 'Web USB API: Not supported';
+    }
+}
+
+// Gyroscope API
+function testGyroscopeAPI() {
+    if ('Gyroscope' in window) {
+        const gyroscope = new Gyroscope({ frequency: 60 });
+        gyroscope.addEventListener('reading', () => {
+            console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
+            console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
+            console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
+        });
+        gyroscope.start();
+        return 'Gyroscope API: Started';
+    } else {
+        return 'Gyroscope API: Not supported';
+    }
+}
+
+// Accelerometer API
+function testAccelerometerAPI() {
+    if ('Accelerometer' in window) {
+        const accelerometer = new Accelerometer({ frequency: 60 });
+        accelerometer.addEventListener('reading', () => {
+            console.log(`Acceleration along the X-axis ${accelerometer.x}`);
+            console.log(`Acceleration along the Y-axis ${accelerometer.y}`);
+            console.log(`Acceleration along the Z-axis ${accelerometer.z}`);
+        });
+        accelerometer.start();
+        return 'Accelerometer API: Started';
+    } else {
+        return 'Accelerometer API: Not supported';
+    }
+}
+
+// Ambient Light API
+function testAmbientLightAPI() {
+    if ('ondevicelight' in window) {
+        window.addEventListener('devicelight', (event) => {
+            console.log(`Ambient light level: ${event.value} lux`);
+        });
+        return 'Ambient Light API: Event listener added';
+    } else {
+        return 'Ambient Light API: Not supported';
+    }
+}
+
+// Magnetometer API
+function testMagnetometerAPI() {
+    if ('Magnetometer' in window) {
+        const magnetometer = new Magnetometer({ frequency: 60 });
+        magnetometer.addEventListener('reading', () => {
+            console.log(`Magnetic field along the X-axis ${magnetometer.x}`);
+            console.log(`Magnetic field along the Y-axis ${magnetometer.y}`);
+            console.log(`Magnetic field along the Z-axis ${magnetometer.z}`);
+        });
+        magnetometer.start();
+        return 'Magnetometer API: Started';
+    } else {
+        return 'Magnetometer API: Not supported';
+    }
+}
+
+// Proximity API
+function testProximityAPI() {
+    if ('ondeviceproximity' in window) {
+        window.addEventListener('deviceproximity', (event) => {
+            console.log(`Proximity: ${event.value}`);
+        });
+        return 'Proximity API: Event listener added';
+    } else {
+        return 'Proximity API: Not supported';
+    }
+}
+
+// Web Share API
+function testWebShareAPI() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Web Share API',
+            text: 'Hello, World!',
+            url: window.location.href
+        }).then(() => {
+            return 'Web Share API: Shared successfully';
+        }).catch((error) => {
+            return `Web Share API error: ${error}`;
+        });
+    } else {
+        return 'Web Share API: Not supported';
+    }
+}
+
+// Page Visibility API
+function testPageVisibilityAPI() {
+    if ('visibilityState' in document) {
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                console.log('Page is visible');
+            } else {
+                console.log('Page is hidden');
+            }
+        });
+        return 'Page Visibility API: Event listener added';
+    } else {
+        return 'Page Visibility API: Not supported';
+    }
+}
+
+// Screen Orientation API
+function testScreenOrientationAPI() {
+    if ('orientation' in screen) {
+        screen.orientation.addEventListener('change', () => {
+            console.log(`Screen orientation: ${screen.orientation.type}`);
+        });
+        return 'Screen Orientation API: Event listener added';
+    } else {
+        return 'Screen Orientation API: Not supported';
+    }
+}
+
+// Resize Observer API
+function testResizeObserverAPI() {
+    if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                console.log(`Resized: ${entry.target}`);
+            }
+        });
+        const box = document.createElement('div');
+        box.style.width = '100px';
+        box.style.height = '100px';
+        document.body.appendChild(box);
+        resizeObserver.observe(box);
+        box.style.width = '200px'; // Trigger resize observer
+        return 'Resize Observer API: Observer added';
+    } else {
+        return 'Resize Observer API: Not supported';
+    }
+}
+
+// Mutation Observer API
+function testMutationObserverAPI() {
+    if ('MutationObserver' in window) {
+        const mutationObserver = new MutationObserver(mutations => {
+            for (let mutation of mutations) {
+                console.log(`Mutation: ${mutation.type}`);
+            }
+        });
+        const targetNode = document.createElement('div');
+        document.body.appendChild(targetNode);
+        mutationObserver.observe(targetNode, { attributes: true });
+        targetNode.setAttribute('data-test', 'test'); // Trigger mutation observer
+        return 'Mutation Observer API: Observer added';
+    } else {
+        return 'Mutation Observer API: Not supported';
+    }
+}
+
+// Intersection Observer API
+function testIntersectionObserverAPI() {
+    if ('IntersectionObserver' in window) {
+        const intersectionObserver = new IntersectionObserver(entries => {
+            for (let entry of entries) {
+                console.log(`Intersection: ${entry.isIntersecting}`);
+            }
+        });
+        const targetNode = document.createElement('div');
+        targetNode.style.height = '100px';
+        targetNode.style.width = '100px';
+        targetNode.style.marginTop = '1000px';
+        document.body.appendChild(targetNode);
+        intersectionObserver.observe(targetNode);
+        return 'Intersection Observer API: Observer added';
+    } else {
+        return 'Intersection Observer API: Not supported';
+    }
+}
+
+// Performance Observer API
+function testPerformanceObserverAPI() {
+    if ('PerformanceObserver' in window) {
+        const performanceObserver = new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+                console.log(`Performance entry: ${entry.name}`);
+            }
+        });
+        performanceObserver.observe({ entryTypes: ['mark', 'measure'] });
+        performance.mark('start');
+        performance.mark('end');
+        performance.measure('measure', 'start', 'end'); // Trigger performance observer
+        return 'Performance Observer API: Observer added';
+    } else {
+        return 'Performance Observer API: Not supported';
+    }
+}
+
+// Payment Request API
+function testPaymentRequestAPI() {
+    if ('PaymentRequest' in window) {
+        const paymentRequest = new PaymentRequest([
+            {
+                supportedMethods: 'basic-card',
+                data: {
+                    supportedNetworks: ['visa', 'mastercard']
+                }
+            }
+        ], {
+            total: {
+                label: 'Total',
+                amount: { currency: 'USD', value: '1.00' }
+            }
+        });
+        paymentRequest.show().then(paymentResponse => {
+            paymentResponse.complete('success');
+            return 'Payment Request API: Payment successful';
+        }).catch(error => {
+            return `Payment Request API error: ${error}`;
+        });
+    } else {
+        return 'Payment Request API: Not supported';
+    }
+}
+
+// Device Memory API
+function testDeviceMemoryAPI() {
+    if ('deviceMemory' in navigator) {
+        return `Device Memory API: ${navigator.deviceMemory} GB`;
+    } else {
+        return 'Device Memory API: Not supported';
+    }
+}
+
+// Pointer Lock API
+function testPointerLockAPI() {
+    const elem = document.documentElement;
+    if (elem.requestPointerLock) {
+        elem.requestPointerLock();
+        return 'Pointer Lock API: Pointer locked';
+    } else {
+        return 'Pointer Lock API: Not supported';
+    }
+}
+
+// Web Audio API
+function testWebAudioAPI() {
+    if ('AudioContext' in window || 'webkitAudioContext' in window) {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+        oscillator.connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 1); // Play sound for 1 second
+        return 'Web Audio API: Sound played';
+    } else {
+        return 'Web Audio API: Not supported';
+    }
+}
+// Web Animations API
+function testWebAnimationsAPI() {
+    const element = document.createElement('div');
+    document.body.appendChild(element);
+    const animation = element.animate([
+        { transform: 'translateX(0px)' },
+        { transform: 'translateX(100px)' }
+    ], {
+        duration: 1000,
+        iterations: Infinity
+    });
+    return 'Web Animations API: Animation started';
+}
+
+// Drag and Drop API
+function testDragAndDropAPI() {
+    const draggable = document.createElement('div');
+    draggable.setAttribute('draggable', 'true');
+    draggable.textContent = 'Drag me';
+    document.body.appendChild(draggable);
+    draggable.addEventListener('dragstart', () => {
+        console.log('Drag started');
+    });
+    return 'Drag and Drop API: Draggable element added';
+}
+
+// Media Devices API
+function testMediaDevicesAPI() {
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+            devices.forEach(device => {
+                console.log(`${device.kind}: ${device.label}`);
+            });
+        });
+        return 'Media Devices API: Enumerating devices';
+    } else {
+        return 'Media Devices API: Not supported';
+    }
+}
+
+// Screen Capture API
+function testScreenCaptureAPI() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        navigator.mediaDevices.getDisplayMedia({ video: true }).then(stream => {
+            console.log('Screen capture started');
+        });
+        return 'Screen Capture API: Screen capture started';
+    } else {
+        return 'Screen Capture API: Not supported';
+    }
+}
+
+// Media Session API
+function testMediaSessionAPI() {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: 'Song Title',
+            artist: 'Artist Name',
+            album: 'Album Name',
+            artwork: [
+                { src: 'album-art.jpg', sizes: '96x96', type: 'image/jpeg' }
+            ]
+        });
+        return 'Media Session API: Metadata set';
+    } else {
+        return 'Media Session API: Not supported';
+    }
+}
+
+// Fullscreen Change Event
+function testFullscreenChangeEvent() {
+    document.addEventListener('fullscreenchange', () => {
+        console.log('Fullscreen change event');
+    });
+    return 'Fullscreen Change Event: Listener added';
+}
+
+// Device Orientation Absolute
+function testDeviceOrientationAbsolute() {
+    if ('DeviceOrientationEvent' in window) {
+        window.addEventListener('deviceorientationabsolute', event => {
+            console.log(`Absolute orientation - Alpha: ${event.alpha}, Beta: ${event.beta}, Gamma: ${event.gamma}`);
+        });
+        return 'Device Orientation Absolute: Event listener added';
+    } else {
+        return 'Device Orientation Absolute: Not supported';
+    }
+}
+
+// Device Motion API
+function testDeviceMotionAPI() {
+    if ('DeviceMotionEvent' in window) {
+        window.addEventListener('devicemotion', event => {
+            console.log(`Acceleration - X: ${event.acceleration.x}, Y: ${event.acceleration.y}, Z: ${event.acceleration.z}`);
+        });
+        return 'Device Motion API: Event listener added';
+    } else {
+        return 'Device Motion API: Not supported';
+    }
+}
+
+// Online/Offline Events
+function testOnlineOfflineEvents() {
+    window.addEventListener('online', () => {
+        console.log('Online');
+    });
+    window.addEventListener('offline', () => {
+        console.log('Offline');
+    });
+    return 'Online/Offline Events: Listeners added';
+}
+
+// Page Load Event
+function testPageLoadEvent() {
+    window.addEventListener('load', () => {
+        console.log('Page loaded');
+    });
+    return 'Page Load Event: Listener added';
+}
+
+// Before Unload Event
+function testBeforeUnloadEvent() {
+    window.addEventListener('beforeunload', event => {
+        event.returnValue = 'Are you sure you want to leave?';
+    });
+    return 'Before Unload Event: Listener added';
+}
+
+// Storage Event
+function testStorageEvent() {
+    window.addEventListener('storage', event => {
+        console.log(`Storage event - Key: ${event.key}, Old Value: ${event.oldValue}, New Value: ${event.newValue}`);
+    });
+    return 'Storage Event: Listener added';
+}
+
+// Crypto API
+function testCryptoAPI() {
+    if ('crypto' in window) {
+        const array = new Uint32Array(10);
+        window.crypto.getRandomValues(array);
+        console.log('Crypto API: Random values generated', array);
+        return 'Crypto API: Supported';
+    } else {
+        return 'Crypto API: Not supported';
+    }
+}
+
+// Quota Management API
+function testQuotaManagementAPI() {
+    if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(estimate => {
+            console.log(`Quota: ${estimate.quota}, Usage: ${estimate.usage}`);
+        });
+        return 'Quota Management API: Quota estimated';
+    } else {
+        return 'Quota Management API: Not supported';
+    }
+}
+
+// Contact Picker API
+function testContactPickerAPI() {
+    if ('contacts' in navigator && 'select' in navigator.contacts) {
+        navigator.contacts.select(['name', 'email'], { multiple: true }).then(contacts => {
+            console.log('Contacts selected', contacts);
+        });
+        return 'Contact Picker API: Contacts selected';
+    } else {
+        return 'Contact Picker API: Not supported';
+    }
+}
+
+// Wake Lock API
+function testWakeLockAPI() {
+    if ('wakeLock' in navigator) {
+        navigator.wakeLock.request('screen').then(lock => {
+            console.log('Wake Lock: Screen lock acquired');
+        });
+        return 'Wake Lock API: Screen lock requested';
+    } else {
+        return 'Wake Lock API: Not supported';
+    }
+}
+
+// Background Sync API
+function testBackgroundSyncAPI() {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+            return registration.sync.register('sync-tag');
+        }).then(() => {
+            console.log('Background Sync: Sync registered');
+        });
+        return 'Background Sync API: Sync registered';
+    } else {
+        return 'Background Sync API: Not supported';
+    }
+}
+
+// Periodic Sync API
+function testPeriodicSyncAPI() {
+    if ('serviceWorker' in navigator && 'periodicSync' in navigator.serviceWorker) {
+        navigator.serviceWorker.ready.then(registration => {
+            return registration.periodicSync.register('sync-tag', { minInterval: 24 * 60 * 60 * 1000 });
+        }).then(() => {
+            console.log('Periodic Sync: Sync registered');
+        });
+        return 'Periodic Sync API: Sync registered';
+    } else {
+        return 'Periodic Sync API: Not supported';
+    }
+}
+
+// Generic Sensor API
+function testSensorAPI() {
+    if ('Sensor' in window) {
+        const sensor = new Sensor({ frequency: 60 });
+        sensor.addEventListener('reading', () => {
+            console.log(`Sensor reading: ${sensor.reading}`);
+        });
+        sensor.start();
+        return 'Generic Sensor API: Sensor started';
+    } else {
+        return 'Generic Sensor API: Not supported';
+    }
+}
+
+// Credential Management API
+function testCredentialManagementAPI() {
+    if ('credentials' in navigator) {
+        navigator.credentials.get({ password: true }).then(credential => {
+            console.log('Credential Management: Credential retrieved', credential);
+        });
+        return 'Credential Management API: Credential retrieved';
+    } else {
+        return 'Credential Management API: Not supported';
+    }
+}
+
+// Visibility Change Event
+function testVisibilityChangeEvent() {
+    document.addEventListener('visibilitychange', () => {
+        console.log(`Visibility changed: ${document.visibilityState}`);
+    });
+    return 'Visibility Change Event: Listener added';
+}
+
+// Scroll Restoration API
+function testScrollRestorationAPI() {
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+        return 'Scroll Restoration API: Set to manual';
+    } else {
+        return 'Scroll Restoration API: Not supported';
+    }
+}
+
+// Focus and Blur Events
+function testFocusBlurEvents() {
+    window.addEventListener('focus', () => {
+        console.log('Window focused');
+    });
+    window.addEventListener('blur', () => {
+        console.log('Window blurred');
+    });
+    return 'Focus and Blur Events: Listeners added';
+}
+
+// Pointer Events
+function testPointerEvents() {
+    window.addEventListener('pointerdown', () => {
+        console.log('Pointer down');
+    });
+    window.addEventListener('pointerup', () => {
+        console.log('Pointer up');
+    });
+    return 'Pointer Events: Listeners added';
+}
+
+// Pop State Event
+function testPopStateEvent() {
+    window.addEventListener('popstate', event => {
+        console.log(`Pop state event: ${event.state}`);
+    });
+    return 'Pop State Event: Listener added';
+}
 // Initialize feature sections on page load
 createFeatureSections();
