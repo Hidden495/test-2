@@ -95,7 +95,56 @@ const features = [
     { id: 'scrollRestoration', name: 'Scroll Restoration API', func: testScrollRestorationAPI },
     { id: 'focus', name: 'Focus and Blur Events', func: testFocusBlurEvents },
     { id: 'pointerEvents', name: 'Pointer Events', func: testPointerEvents },
-    { id: 'popState', name: 'Pop State Event', func: testPopStateEvent }
+    { id: 'popState', name: 'Pop State Event', func: testPopStateEvent },
+    { id: 'touch', name: 'Touch Events', func: testTouchEvents },
+    { id: 'history', name: 'History API', func: testHistoryAPI },
+    { id: 'performanceTiming', name: 'Performance Timing API', func: testPerformanceTimingAPI },
+    { id: 'fileReader', name: 'FileReader API', func: testFileReaderAPI },
+    { id: 'fetchAbort', name: 'Fetch with AbortController', func: testFetchAbortController },
+    { id: 'sharedWorker', name: 'Shared Workers', func: testSharedWorker },
+    { id: 'webSpeech', name: 'Web Speech API', func: testWebSpeechAPI },
+    { id: 'mediaCapabilities', name: 'Media Capabilities API', func: testMediaCapabilitiesAPI },
+    { id: 'visualViewport', name: 'Visual Viewport API', func: testVisualViewportAPI },
+    { id: 'navigatorConnection', name: 'Navigator Connection API', func: testNavigatorConnectionAPI },
+    { id: 'gamepadHaptic', name: 'Gamepad Haptic Actuator', func: testGamepadHapticActuator },
+    { id: 'lightSensor', name: 'Ambient Light Sensor API', func: testLightSensorAPI },
+    { id: 'absoluteOrientationSensor', name: 'Absolute Orientation Sensor API', func: testAbsoluteOrientationSensorAPI },
+    { id: 'relativeOrientationSensor', name: 'Relative Orientation Sensor API', func: testRelativeOrientationSensorAPI },
+    { id: 'linearAccelerationSensor', name: 'Linear Acceleration Sensor API', func: testLinearAccelerationSensorAPI },
+    { id: 'geolocationSensor', name: 'Geolocation Sensor API', func: testGeolocationSensorAPI },
+    { id: 'barcodeDetection', name: 'Barcode Detection API', func: testBarcodeDetectionAPI },
+    { id: 'faceDetection', name: 'Face Detection API', func: testFaceDetectionAPI },
+    { id: 'shapeDetection', name: 'Shape Detection API', func: testShapeDetectionAPI },
+    { id: 'presentation', name: 'Presentation API', func: testPresentationAPI },
+    { id: 'periodicBackgroundSync', name: 'Periodic Background Sync', func: testPeriodicBackgroundSync },
+    { id: 'backgroundFetch', name: 'Background Fetch API', func: testBackgroundFetchAPI },
+    { id: 'backgroundTasks', name: 'Background Tasks API', func: testBackgroundTasksAPI },
+    { id: 'idleDetection', name: 'Idle Detection API', func: testIdleDetectionAPI },
+    { id: 'fontLoading', name: 'Font Loading API', func: testFontLoadingAPI },
+    { id: 'layoutInstability', name: 'Layout Instability API', func: testLayoutInstabilityAPI },
+    { id: 'resizeObserverPolyfill', name: 'Resize Observer Polyfill', func: testResizeObserverPolyfill },
+    { id: 'mediaRecorder', name: 'Media Recorder API', func: testMediaRecorderAPI },
+    { id: 'devicePosture', name: 'Device Posture API', func: testDevicePostureAPI },
+    { id: 'ambientLightSensor', name: 'Ambient Light Sensor', func: testAmbientLightSensor },
+    { id: 'contactPicker', name: 'Contact Picker API', func: testContactPickerAPI },
+    { id: 'wakeLock', name: 'Wake Lock API', func: testWakeLockAPI },
+    { id: 'periodicSync', name: 'Periodic Sync API', func: testPeriodicSyncAPI },
+    { id: 'sensor', name: 'Generic Sensor API', func: testSensorAPI },
+    { id: 'credentialManagement', name: 'Credential Management API', func: testCredentialManagementAPI },
+    { id: 'visibilityChange', name: 'Visibility Change Event', func: testVisibilityChangeEvent },
+    { id: 'scrollRestoration', name: 'Scroll Restoration API', func: testScrollRestorationAPI },
+    { id: 'focus', name: 'Focus and Blur Events', func: testFocusBlurEvents },
+    { id: 'pointerEvents', name: 'Pointer Events', func: testPointerEvents },
+    { id: 'popState', name: 'Pop State Event', func: testPopStateEvent },
+    { id: 'idleDetector', name: 'Idle Detector API', func: testIdleDetectorAPI },
+    { id: 'paintTiming', name: 'Paint Timing API', func: testPaintTimingAPI },
+    { id: 'webAuthentication', name: 'Web Authentication API', func: testWebAuthenticationAPI },
+    { id: 'gamepadExtensions', name: 'Gamepad Extensions API', func: testGamepadExtensionsAPI },
+    { id: 'webCodecs', name: 'Web Codecs API', func: testWebCodecsAPI },
+    { id: 'webGPU', name: 'WebGPU API', func: testWebGPUAPI },
+    { id: 'webTransport', name: 'WebTransport API', func: testWebTransportAPI },
+    { id: 'webXR', name: 'WebXR API', func: testWebXRAPI },
+    { id: 'geoLocation', name: 'Geolocation API', func: testGeoLocationAPI }
 ];
 
 // Function to create feature sections
@@ -1296,5 +1345,419 @@ function testPopStateEvent() {
     });
     return 'Pop State Event: Listener added';
 }
+// Touch Events
+function testTouchEvents() {
+    window.addEventListener('touchstart', () => console.log('Touch start'));
+    return 'Touch Events: Listener added for touchstart';
+}
+
+// History API
+function testHistoryAPI() {
+    history.pushState({ page: 1 }, 'title 1', '?page=1');
+    history.pushState({ page: 2 }, 'title 2', '?page=2');
+    window.onpopstate = event => console.log(`History API: ${event.state}`);
+    return 'History API: States pushed and popstate listener added';
+}
+
+// Performance Timing API
+function testPerformanceTimingAPI() {
+    const timing = performance.timing;
+    console.log('Performance Timing API:', timing);
+    return 'Performance Timing API: Timing logged';
+}
+
+// FileReader API
+function testFileReaderAPI() {
+    const reader = new FileReader();
+    reader.onload = () => console.log('FileReader API: File loaded', reader.result);
+    reader.readAsText(new Blob(['Hello, world!'], { type: 'text/plain' }));
+    return 'FileReader API: Reading text';
+}
+
+// Fetch with AbortController
+function testFetchAbortController() {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    fetch('https://jsonplaceholder.typicode.com/todos/1', { signal })
+        .then(response => response.json())
+        .then(data => console.log('Fetch API: Data fetched', data))
+        .catch(error => console.error('Fetch API: Fetch aborted', error));
+    controller.abort();
+    return 'Fetch with AbortController: Fetch initiated and aborted';
+}
+
+// Shared Workers
+function testSharedWorker() {
+    const worker = new SharedWorker('worker.js');
+    worker.port.onmessage = event => console.log('Shared Worker: Message received', event.data);
+    worker.port.postMessage('Hello from main script');
+    return 'Shared Workers: Worker initiated';
+}
+
+// Web Speech API
+function testWebSpeechAPI() {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.onresult = event => console.log('Web Speech API: Result received', event.results[0][0].transcript);
+        recognition.start();
+        return 'Web Speech API: Speech recognition started';
+    } else {
+        return 'Web Speech API: Not supported';
+    }
+}
+
+// Media Capabilities API
+function testMediaCapabilitiesAPI() {
+    if ('mediaCapabilities' in navigator) {
+        navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/webm', width: 640, height: 480, bitrate: 100000, framerate: 30 } })
+            .then(info => console.log('Media Capabilities API: Decoding info', info));
+        return 'Media Capabilities API: Decoding info requested';
+    } else {
+        return 'Media Capabilities API: Not supported';
+    }
+}
+
+// Visual Viewport API
+function testVisualViewportAPI() {
+    if ('visualViewport' in window) {
+        visualViewport.addEventListener('resize', () => console.log('Visual Viewport API: Resized', visualViewport));
+        return 'Visual Viewport API: Resize listener added';
+    } else {
+        return 'Visual Viewport API: Not supported';
+    }
+}
+
+// Navigator Connection API
+function testNavigatorConnectionAPI() {
+    if ('connection' in navigator) {
+        console.log('Navigator Connection API:', navigator.connection);
+        return 'Navigator Connection API: Connection info logged';
+    } else {
+        return 'Navigator Connection API: Not supported';
+    }
+}
+
+// Gamepad Haptic Actuator
+function testGamepadHapticActuator() {
+    window.addEventListener('gamepadconnected', event => {
+        const gamepad = event.gamepad;
+        if (gamepad.hapticActuators && gamepad.hapticActuators.length > 0) {
+            gamepad.hapticActuators[0].pulse(1.0, 200);
+            console.log('Gamepad Haptic Actuator: Pulse initiated');
+        } else {
+            console.log('Gamepad Haptic Actuator: Not supported');
+        }
+    });
+    return 'Gamepad Haptic Actuator: Listener added';
+}
+
+// Ambient Light Sensor API
+function testLightSensorAPI() {
+    if ('AmbientLightSensor' in window) {
+        const sensor = new AmbientLightSensor();
+        sensor.onreading = () => console.log('Ambient Light Sensor API: Light level', sensor.illuminance);
+        sensor.start();
+        return 'Ambient Light Sensor API: Sensor started';
+    } else {
+        return 'Ambient Light Sensor API: Not supported';
+    }
+}
+
+// Absolute Orientation Sensor API
+function testAbsoluteOrientationSensorAPI() {
+    if ('AbsoluteOrientationSensor' in window) {
+        const sensor = new AbsoluteOrientationSensor();
+        sensor.onreading = () => console.log('Absolute Orientation Sensor API: Orientation', sensor.quaternion);
+        sensor.start();
+        return 'Absolute Orientation Sensor API: Sensor started';
+    } else {
+        return 'Absolute Orientation Sensor API: Not supported';
+    }
+}
+
+// Relative Orientation Sensor API
+function testRelativeOrientationSensorAPI() {
+    if ('RelativeOrientationSensor' in window) {
+        const sensor = new RelativeOrientationSensor();
+        sensor.onreading = () => console.log('Relative Orientation Sensor API: Orientation', sensor.quaternion);
+        sensor.start();
+        return 'Relative Orientation Sensor API: Sensor started';
+    } else {
+        return 'Relative Orientation Sensor API: Not supported';
+    }
+}
+
+// Linear Acceleration Sensor API
+function testLinearAccelerationSensorAPI() {
+    if ('LinearAccelerationSensor' in window) {
+        const sensor = new LinearAccelerationSensor();
+        sensor.onreading = () => console.log('Linear Acceleration Sensor API: Acceleration', sensor.x, sensor.y, sensor.z);
+        sensor.start();
+        return 'Linear Acceleration Sensor API: Sensor started';
+    } else {
+        return 'Linear Acceleration Sensor API: Not supported';
+    }
+}
+
+// Geolocation Sensor API
+function testGeolocationSensorAPI() {
+    if ('GeolocationSensor' in window) {
+        const sensor = new GeolocationSensor();
+        sensor.onreading = () => console.log('Geolocation Sensor API: Position', sensor.latitude, sensor.longitude);
+        sensor.start();
+        return 'Geolocation Sensor API: Sensor started';
+    } else {
+        return 'Geolocation Sensor API: Not supported';
+    }
+}
+
+// Barcode Detection API
+function testBarcodeDetectionAPI() {
+    if ('BarcodeDetector' in window) {
+        const detector = new BarcodeDetector();
+        detector.detect(document.querySelector('img')).then(barcodes => {
+            barcodes.forEach(barcode => console.log('Barcode Detection API:', barcode));
+        });
+        return 'Barcode Detection API: Detection started';
+    } else {
+        return 'Barcode Detection API: Not supported';
+    }
+}
+
+// Face Detection API
+function testFaceDetectionAPI() {
+    if ('FaceDetector' in window) {
+        const detector = new FaceDetector();
+        detector.detect(document.querySelector('img')).then(faces => {
+            faces.forEach(face => console.log('Face Detection API:', face));
+        });
+        return 'Face Detection API: Detection started';
+    } else {
+        return 'Face Detection API: Not supported';
+    }
+}
+
+// Shape Detection API
+function testShapeDetectionAPI() {
+    if ('TextDetector' in window) {
+        const detector = new TextDetector();
+        detector.detect(document.querySelector('img')).then(texts => {
+            texts.forEach(text => console.log('Shape Detection API:', text));
+        });
+        return 'Shape Detection API: Detection started';
+    } else {
+        return 'Shape Detection API: Not supported';
+    }
+}
+
+// Presentation API
+function testPresentationAPI() {
+    if ('presentation' in navigator) {
+        const request = new PresentationRequest(['https://example.com']);
+        request.start().then(connection => {
+            console.log('Presentation API: Connection started', connection);
+        });
+        return 'Presentation API: Request started';
+    } else {
+        return 'Presentation API: Not supported';
+    }
+}
+
+// Periodic Background Sync
+function testPeriodicBackgroundSync() {
+    if ('serviceWorker' in navigator && 'periodicSync' in navigator.serviceWorker) {
+        navigator.serviceWorker.ready.then(registration => {
+            return registration.periodicSync.register('sync-tag', { minInterval: 24 * 60 * 60 * 1000 });
+        }).then(() => {
+            console.log('Periodic Background Sync: Sync registered');
+        });
+        return 'Periodic Background Sync: Sync registered';
+    } else {
+        return 'Periodic Background Sync: Not supported';
+    }
+}
+
+// Background Fetch API
+function testBackgroundFetchAPI() {
+    if ('serviceWorker' in navigator && 'backgroundFetch' in navigator.serviceWorker) {
+        navigator.serviceWorker.ready.then(registration => {
+            return registration.backgroundFetch.fetch('my-fetch', ['https://example.com/file1', 'https://example.com/file2']);
+        }).then(fetch => {
+            console.log('Background Fetch API: Fetch started', fetch);
+        });
+        return 'Background Fetch API: Fetch started';
+    } else {
+        return 'Background Fetch API: Not supported';
+    }
+}
+
+// Background Tasks API
+function testBackgroundTasksAPI() {
+    if ('backgroundTasks' in navigator) {
+        navigator.backgroundTasks.register('my-task', { minInterval: 24 * 60 * 60 * 1000 });
+        return 'Background Tasks API: Task registered';
+    } else {
+        return 'Background Tasks API: Not supported';
+    }
+}
+
+// Idle Detection API
+function testIdleDetectionAPI() {
+    if ('IdleDetector' in window) {
+        const detector = new IdleDetector();
+        detector.addEventListener('change', () => console.log('Idle Detection API: State changed', detector.state));
+        detector.start();
+        return 'Idle Detection API: Detector started';
+    } else {
+        return 'Idle Detection API: Not supported';
+    }
+}
+
+// Font Loading API
+function testFontLoadingAPI() {
+    if ('fonts' in document) {
+        document.fonts.load('10pt "Comic Sans MS"').then(() => {
+            console.log('Font Loading API: Font loaded');
+        });
+        return 'Font Loading API: Font loading initiated';
+    } else {
+        return 'Font Loading API: Not supported';
+    }
+}
+
+// Layout Instability API
+function testLayoutInstabilityAPI() {
+    const observer = new PerformanceObserver(list => {
+        for (const entry of list.getEntries()) {
+            console.log('Layout Instability API: Layout shift', entry);
+        }
+    });
+    observer.observe({ type: 'layout-shift', buffered: true });
+    return 'Layout Instability API: Observer added';
+}
+
+// Resize Observer Polyfill
+function testResizeObserverPolyfill() {
+    const ResizeObserver = window.ResizeObserver || ResizeObserverPolyfill;
+    const observer = new ResizeObserver(entries => {
+        for (const entry of entries) {
+            console.log('Resize Observer Polyfill: Resize detected', entry);
+        }
+    });
+    const box = document.createElement('div');
+    box.style.width = '100px';
+    box.style.height = '100px';
+    document.body.appendChild(box);
+    observer.observe(box);
+    box.style.width = '200px'; // Trigger resize observer
+    return 'Resize Observer Polyfill: Observer added';
+}
+
+// Media Recorder API
+function testMediaRecorderAPI() {
+    if ('MediaRecorder' in window) {
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
+            const recorder = new MediaRecorder(stream);
+            recorder.ondataavailable = event => console.log('Media Recorder API: Data available', event.data);
+            recorder.start();
+            return 'Media Recorder API: Recording started';
+        });
+    } else {
+        return 'Media Recorder API: Not supported';
+    }
+}
+
+// Device Posture API
+function testDevicePostureAPI() {
+    if ('devicePosture' in navigator) {
+        navigator.devicePosture.addEventListener('change', () => console.log('Device Posture API: Posture changed', navigator.devicePosture.type));
+        return 'Device Posture API: Listener added';
+    } else {
+        return 'Device Posture API: Not supported';
+    }
+}
+
+// Idle Detector API
+function testIdleDetectorAPI() {
+    if ('IdleDetector' in window) {
+        const detector = new IdleDetector();
+        detector.addEventListener('change', () => console.log('Idle Detector API: State changed', detector.state));
+        detector.start();
+        return 'Idle Detector API: Detector started';
+    } else {
+        return 'Idle Detector API: Not supported';
+    }
+}
+
+// Paint Timing API
+function testPaintTimingAPI() {
+    const observer = new PerformanceObserver(list => {
+        for (const entry of list.getEntries()) {
+            console.log('Paint Timing API: Paint timing', entry);
+        }
+    });
+    observer.observe({ type: 'paint', buffered: true });
+    return 'Paint Timing API: Observer added';
+}
+
+// Web Authentication API
+function testWebAuthenticationAPI() {
+    if ('credentials' in navigator) {
+        navigator.credentials.create({ publicKey: { challenge: new Uint8Array(32), rp: { name: 'Example' }, user: { id: new Uint8Array(16), name: 'user@example.com', displayName: 'User' }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }] } })
+            .then(credential => console.log('Web Authentication API: Credential created', credential))
+            .catch(error => console.error('Web Authentication API: Error', error));
+        return 'Web Authentication API: Credential creation initiated';
+    } else {
+        return 'Web Authentication API: Not supported';
+    }
+}
+
+// Gamepad Extensions API
+function testGamepadExtensionsAPI() {
+    window.addEventListener('gamepadconnected', event => {
+        const gamepad = event.gamepad;
+        if (gamepad.buttons && gamepad.buttons.length > 0) {
+            console.log('Gamepad Extensions API: Gamepad connected', gamepad);
+        } else {
+            console.log('Gamepad Extensions API: Not supported');
+        }
+    });
+    return 'Gamepad Extensions API: Listener added';
+}
+
+// Web Codecs API
+async function testWebCodecsAPI() {
+    if ('VideoDecoder' in window) {
+        const decoder = new VideoDecoder({
+            output: frame => {
+                console.log('Web Codecs API: Frame decoded', frame);
+                // Here you can handle the decoded frame, for example, by drawing it on a canvas
+            },
+            error: error => {
+                console.error('Web Codecs API: Error', error);
+            }
+        });
+
+        decoder.configure({
+            codec: 'vp8',
+            codedWidth: 640,
+            codedHeight: 480
+        });
+
+        // Example encoded video chunk (this should be replaced with actual video data)
+        const encodedChunk = new EncodedVideoChunk({
+            type: 'key',
+            timestamp: 0,
+            data: new Uint8Array([0x00, 0x01, 0x02, 0x03]) // Replace with actual encoded video data
+        });
+
+        decoder.decode(encodedChunk);
+
+        return 'Web Codecs API: Decoder configured and decoding started';
+    } else {
+        return 'Web Codecs API: Not supported';
+    }
+}
+
 // Initialize feature sections on page load
 createFeatureSections();
