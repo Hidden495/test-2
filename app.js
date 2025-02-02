@@ -125,7 +125,7 @@ const features = [
     { id: 'resizeObserverPolyfill', name: 'Resize Observer Polyfill', func: testResizeObserverPolyfill },
     { id: 'mediaRecorder', name: 'Media Recorder API', func: testMediaRecorderAPI },
     { id: 'devicePosture', name: 'Device Posture API', func: testDevicePostureAPI },
-    { id: 'ambientLightSensor', name: 'Ambient Light Sensor', func: testAmbientLightSensor },
+   // { id: 'ambientLightSensor', name: 'Ambient Light Sensor', func: testAmbientLightSensor },
     { id: 'contactPicker', name: 'Contact Picker API', func: testContactPickerAPI },
     { id: 'wakeLock', name: 'Wake Lock API', func: testWakeLockAPI },
     { id: 'periodicSync', name: 'Periodic Sync API', func: testPeriodicSyncAPI },
@@ -141,10 +141,10 @@ const features = [
     { id: 'webAuthentication', name: 'Web Authentication API', func: testWebAuthenticationAPI },
     { id: 'gamepadExtensions', name: 'Gamepad Extensions API', func: testGamepadExtensionsAPI },
     { id: 'webCodecs', name: 'Web Codecs API', func: testWebCodecsAPI },
-    { id: 'webGPU', name: 'WebGPU API', func: testWebGPUAPI },
-    { id: 'webTransport', name: 'WebTransport API', func: testWebTransportAPI },
-    { id: 'webXR', name: 'WebXR API', func: testWebXRAPI },
-    { id: 'geoLocation', name: 'Geolocation API', func: testGeoLocationAPI }
+   // { id: 'webGPU', name: 'WebGPU API', func: testWebGPUAPI },
+   // { id: 'webTransport', name: 'WebTransport API', func: testWebTransportAPI },
+    //{ id: 'webXR', name: 'WebXR API', func: testWebXRAPI },
+    //{ id: 'geoLocation', name: 'Geolocation API', func: testGeoLocationAPI }
 ];
 
 // Function to create feature sections
