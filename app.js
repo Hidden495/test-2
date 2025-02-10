@@ -128,11 +128,8 @@ const features = [
     { id: 'paintTiming', name: 'Paint Timing API', func: testPaintTimingAPI },
     { id: 'webAuthentication', name: 'Web Authentication API', func: testWebAuthenticationAPI },
     { id: 'gamepadExtensions', name: 'Gamepad Extensions API', func: testGamepadExtensionsAPI },
-    { id: 'webCodecs', name: 'Web Codecs API', func: testWebCodecsAPI },
-    { id: 'webGPU', name: 'WebGPU API', func: testWebGPUAPI },
-    { id: 'webTransport', name: 'WebTransport API', func: testWebTransportAPI },
-    { id: 'webXR', name: 'WebXR API', func: testWebXRAPI },
-    { id: 'geoLocation', name: 'Geolocation API', func: testGeoLocationAPI }
+    { id: 'webCodecs', name: 'Web Codecs API', func: testWebCodecsAPI }
+    
 ];
 
 

